@@ -22,7 +22,7 @@ namespace PlaywrightDemo
 
             //Browser and make sure to run headed.
             await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-            { 
+            {
                 Headless = false,
             });
 
