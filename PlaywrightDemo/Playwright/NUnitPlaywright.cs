@@ -2,6 +2,8 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using System.Threading;
+
 namespace PlaywrightDemo
 {
     public class NUnitPlaywright : PageTest
@@ -13,20 +15,30 @@ namespace PlaywrightDemo
         public async Task Setup()
         {
             await Page.GotoAsync(url);
+  
         }
 
         [Test]
         public async Task Test1Async()
         {
-            await Page.ClickAsync(loginButton);
-            //await page.ScreenshotAsync(new PageScreenshotOptions { Path = "Login.png" });
-
+           // Page.SetDefaultTimeout(10);
+            // await Page.ClickAsync(loginButton);
+            var clickLoginButton = Page.Locator(loginButton);
+            await clickLoginButton.ClickAsync();
+           
             await Page.FillAsync("#UserName", "admin");
             await Page.FillAsync("#Password", "password");
-            await Page.ClickAsync("text=Log in");
+
+            var checkbox = Page.Locator("#RememberMe");
+            await checkbox.CheckAsync();
+
+            //await Page.ClickAsync("text=Log in");
+            var secondLoginButton = Page.Locator("input", new PageLocatorOptions { HasTextString = "Log in"});
+            await secondLoginButton.ClickAsync();
 
             //Assertion
             await Expect(Page.Locator("text='Employee Details'")).ToBeVisibleAsync();
+            
         }
     }
 }
