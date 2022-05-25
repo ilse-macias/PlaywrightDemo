@@ -2,6 +2,8 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using Microsoft.Playwright;
 using Microsoft.Playwright.NUnit;
+using PlaywrightDemo.POM;
+
 namespace PlaywrightDemo
 {
     public class PlaywrigthDemo
@@ -40,6 +42,29 @@ namespace PlaywrightDemo
              await page.ClickAsync("text=Log in");
 
             var isExist = await page.Locator("text='Employee Details'").IsVisibleAsync();
+            Assert.IsTrue(isExist);
+        }
+
+        [Test]
+        public async Task TestWithPOM()
+        {
+            //Playwright
+            using var playwright = await Playwright.CreateAsync();
+            //Browser and make sure to run headed.
+            await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = false,
+                SlowMo = 100
+            });
+            //Page
+            var page = await browser.NewPageAsync();
+            await page.GotoAsync(url);
+
+            LoginPageUpgrade loginPage = new LoginPageUpgrade(page);
+            //LoginPage loginPage = new LoginPage(page);
+            await loginPage.ClickLogin();
+            await loginPage.Login("admin", "password");
+            var isExist = await loginPage.IsEmployeeDetailsExist();
             Assert.IsTrue(isExist);
         }
     }
